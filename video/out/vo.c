@@ -1508,7 +1508,7 @@ struct vo_frame *vo_frame_ref(struct vo_frame *frame)
  * lookup an integer in a table, table must have 0 as the last key
  * param: key key to search for
  * returns translation corresponding to key or "to" value of last mapping
- *         if not found.
+ *         if not found.t
  */
 int lookup_keymap_table(const struct mp_keymap *map, int key)
 {

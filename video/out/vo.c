@@ -1040,7 +1040,7 @@ static bool render_frame(struct vo *vo)
         frame->pts = now;
     }
 
-    if (frame->duration <= 0) {
+    if (vo->opts->vrr_adjust && frame->duration <= 0) {
         //move next frame to current position. this helps maintain the previously
         //defined valid pts_offset.
         in->pts_offset = -frame->duration;
@@ -1241,6 +1241,7 @@ static bool render_frame(struct vo *vo)
         //we might still have valid time to output the current frame even after, for whatever
         //reason, the driver has dropped it, so retry. we won't be retrying forever
         //since it will become old and vo will properly drop it to go next.
+        //if in->current_frame has been externally freed, then we check for null to keep it freed
         if (vo->opts->vrr_adjust && in->current_frame && driver_dropped_frame) {
             talloc_free(in->current_frame);
             //reverting timing info
@@ -1261,7 +1262,7 @@ static bool render_frame(struct vo *vo)
         update_vsync_timing_after_swap(vo, &vsync);
     }
 
-    if (vo->driver->caps & VO_CAP_NORETAIN && in->current_frame) {
+    if (vo->driver->caps & VO_CAP_NORETAIN) {
         talloc_free(in->current_frame);
         in->current_frame = NULL;
     }
@@ -1299,8 +1300,7 @@ done:
     if (!(vo->driver->caps & VO_CAP_FRAMEOWNER) || !driver_has_received_frame || driver_dropped_frame)
         talloc_free(frame);
 
-    if (unmodified_frame)
-        talloc_free(unmodified_frame);
+    talloc_free(unmodified_frame);
     
     mp_mutex_unlock(&in->lock);
 

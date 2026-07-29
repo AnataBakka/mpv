@@ -583,7 +583,7 @@ local function append_general_perfdata(s)
 end
 
 local function append_display_sync(s)
-    if not mp.get_property_bool("display-sync-active", false) then
+    if not mp.get_property_bool("display-sync-active", false) and not mp.get_opt("vrr-adjust") then
         return
     end
 

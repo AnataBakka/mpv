@@ -1321,7 +1321,7 @@ Video
     determined value is wrong.
 
 ``--minimum-display-fps=<fps>``
-    Set the minimum display FPS used with the ``--vrr-adjust=true`` mode. By
+    Set the minimum display FPS used with the ``--vrr-adjust=yes`` mode. By
     default, it uses the maximum display fps.
 
 ``--hwdec=<api1,api2,...|no|auto|auto-copy>``

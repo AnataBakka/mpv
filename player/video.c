@@ -808,9 +808,12 @@ static void handle_display_sync_frame(struct MPContext *mpctx,
 
     mpctx->display_sync_active = false;
 
-    if (vo->opts->vrr_adjust && vo_get_pts_offset(vo) != 0) {
-        mpctx->mistimed_frames_total += 1;
-        MP_STATS(mpctx, "mistimed");
+    if (vo->opts->vrr_adjust) {
+        int64_t count = vo_get_mistimed_count(vo);
+        if (count != mpctx->mistimed_frames_total) {
+            mpctx->mistimed_frames_total = count;
+            MP_STATS(mpctx, "mistimed");
+        }
     }
 
     if (!VS_IS_DISP(mode) || !vo_is_visible(vo))
@@ -893,7 +896,8 @@ static void handle_display_sync_frame(struct MPContext *mpctx,
     }
 
     if (drop_repeat) {
-        mpctx->mistimed_frames_total += 1;
+        vo_increment_mistimed_count(vo, 1)
+        mpctx->mistimed_frames_total = vo_get_mistimed_count(vo);
         MP_STATS(mpctx, "mistimed");
     }
 
